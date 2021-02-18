@@ -1,48 +1,33 @@
 
-import React from "react";
-import {renderHook} from "@testing-library/react-hooks";
+import {cleanup, renderHook } from "@testing-library/react-hooks";
+import { UseScriptData } from "@hooks/use-script";
 
-import {useScript} from '../';
+import  { useScript } from '../';
 
-describe("useScript", ()=>{
+jest.mock('../../utils/helper-functions', () => ({
+    loadScript: jest.fn(),
+    removeScript: jest.fn()
+}));
+
+import { loadScript, removeScript } from '../../utils/helper-functions';
+
+afterEach(cleanup)
+
+describe("useScript hook", ()=>{
+    let value:UseScriptData = { id:"1", src:"../../utils/helper-functions", callback:()=>{}, async:true }
+
+    const {unmount} =  renderHook(()=>useScript(value))
+
+    it("should call a loadScript function",()=>{
+
+        expect(loadScript).toHaveBeenCalledTimes(1)
+        expect(loadScript).toHaveBeenCalledWith(value)
+    })
+
+    it("should call a removeScript function on unmount component",()=>{
     
-    it.todo("asasa")
-    
-    describe("useEffect", ()=>{
-        it.todo("should userEffect has been called")
+        unmount()
+        expect(removeScript).toHaveBeenCalledTimes(1)
+        expect(removeScript).toHaveBeenCalledWith(value.id)
     })
 })
-
-
-
-// describe("Testando",()=>{
-    //     it("should resave",()=>{
-        //       const data = { id:"12", src:"../", callback:()=>{}, async:true }
-        
-        //       const values = jest.fn().mockReturnValue(data)
-        
-        //       const {result} = renderHook(()=> useScript(data))
-        
-        //       expect(result.current).toMatchObject(data)
-        //     })
-        // })
-        
-        // let useEffect;
-// const mockUserEffect = ()=>{
-//     useEffect.mockImplementationOnce((fn: Function)=> fn());
-// }
-
-// beforeEach(()=>{
-//     /* mocking useEffect */
-//     useEffect = jest.spyOn(React, "useEffect");
-//     mockUserEffect();
-//     mockUserEffect();
-// })
-
-// // jest.mock("loadScript", ()=>({
-// //     loadScript: jest.fn()
-// // }))
-
-// it("as",()=>{
-//     // expect(loadScript).toBeCalledWith()
-// })
