@@ -1,5 +1,5 @@
 
-import {cleanup } from "@testing-library/react-hooks";
+import {cleanup } from "@test-utils";
 import { UseScriptData } from "@hooks/use-script";
 
 import  { useScript } from '../';
