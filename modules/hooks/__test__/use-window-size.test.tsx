@@ -5,7 +5,7 @@ import {useWindowSize} from '../';
 
 const customWindow = window as any
 
-describe("useWindowSize hook", () => {
+describe("useWindowSize (hook)", () => {
   customWindow.innerWidth = 500
   customWindow.innerHeight = 800
 

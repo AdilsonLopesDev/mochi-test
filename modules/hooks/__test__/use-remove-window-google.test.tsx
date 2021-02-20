@@ -1,10 +1,17 @@
-import {renderHook} from "@testing-library/react-hooks";
+import {cleanup, renderHook} from "@testing-library/react-hooks";
 
 import { useRemoveWindowGoogle } from '../';
 
-const customWindow = window as any
+beforeEach(()=>{
+    cleanup()
+})
 
-describe("useRemoveWindowGoogle hook", ()=>{
-    it.todo('should remove google map when a component is unmounted');
+describe("useRemoveWindowGoogle (hook)", ()=>{
+   
+    it('should set window.google.map as empty object when a component is unmounted',()=>{
+        renderHook(useRemoveWindowGoogle)
+        expect(window.google.maps).toEqual({})
+    });
+
 })
 

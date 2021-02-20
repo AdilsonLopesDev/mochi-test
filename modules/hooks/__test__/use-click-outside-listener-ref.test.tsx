@@ -1,54 +1,81 @@
-import React, { useRef, useState } from 'react'
-import { renderHook, act } from '@testing-library/react-hooks'
-import userEvent from '@testing-library/user-event';
-import { fireEvent } from "@testing-library/react";   
+import { Wrapper, render } from '../../test-utils'
+import { cleanup, fireEvent,  } from '@testing-library/react';
+import { useClickOutsideListenerRef } from '../';
 
-import { useClickOutsideListenerRef } from '../'
 
-describe('useClickOutsideListenerRef hook', () => {
-    const mockCallback = jest.fn();
-    const mockHandle = jest.fn();
-    const elementMock = { addEventListener: jest.fn() };
+type TestHookProps = {
+    onClose:()=>{}
+}
+const TestHook: React.FC<TestHookProps> =({onClose})=>{
+    const ref = useClickOutsideListenerRef(onClose)    
+
+    return ( <Wrapper><div ref={ref}>htmlDivRef</div></Wrapper> )
+}
+let realAddEventListener;
+let realRemoveEventListener;
+let eventMap;
+
+beforeEach(() => {
+    realAddEventListener = window.addEventListener;
+    realRemoveEventListener = window.removeEventListener;
+    eventMap = {};
     
-    // jest.spyOn(document, 'getElementById').mockImplementation(()=> elementMock);
+    window.addEventListener = jest.fn((eventName, callback) => {
+      eventMap[eventName] = callback;
+    });
+    
+    window.removeEventListener = jest.fn(eventName => {
+      delete eventMap[eventName];
+    });
+});
 
-    it('calls the outside click handler when an outside click is initiated',()=>{
-        const { result } = renderHook(() => useClickOutsideListenerRef(mockCallback));
-        // const refElement = result.current.refElement = document.createElement('div');
+afterEach(() => {
+    window.addEventListener = realAddEventListener;
+    window.removeEventListener = realRemoveEventListener;
+});
 
-        act(() => {
-            fireEvent.click(document.createElement('div'));
-            fireEvent.mouseDown(document);
+describe('useClickOutsideListenerRef (hook)', () => {
+    const onClose = jest.fn()
+    it('renders without crushing', () => {
+      const { getByText } = render(<TestHook onClose={onClose} />);
+  
+      expect(getByText('htmlDivRef')).toBeDefined();
+    });
+    
+    describe("clickListener (function) ", ()=>{
+        it("should not handle click inside element with listener ref", () => {
+            const { getByText } = render(<TestHook onClose={onClose} />);
+        
+            getByText('htmlDivRef').click();
+            expect(onClose).not.toHaveBeenCalled();
+          });
+        
+          it('should handles click outside element with listener ref', () => {
+             render(<TestHook onClose={onClose} />);
+             fireEvent(document, new Event('click'));
+             expect(onClose).toHaveBeenCalled();
+          });
+      
+    })
+    
+    describe("escapeListener (function) ", ()=>{
+        it('should handles keyup Event', () => {
+            render(<TestHook onClose={onClose} />);
+            fireEvent(document, new Event('keyup'));
+            expect(onClose).toHaveBeenCalled();
         });
-
-        // expect(elementMock.addEventListener).toBeCalledWith();
     })
 
-    it.todo('cleans up the event listeners after component is unmounted')
-})
+    describe("Remove all events ", ()=>{
+        const clickListener = jest.fn()
+        it('should remove click and keyup event', () => {
+           const { unmount } =  render(<TestHook onClose={onClose} />);
+            unmount()
+            // document.removeEventListener('click', clickListener);
+            // document.removeEventListener('keyup', escapeListener);
+            expect(window.addEventListener).toBeCalled();
+            // expect(window.addEventListener).toBeCalledWith("click",clickListener);
+        });
+    })
 
-// describe('useOutsideClick', () => {
-
-
-//     jest.spyOn(document, 'getElementById').mockImplementation(()=> elementMock);
-  
-//     it('refElement should be null at initial render', () => {
-//       const { result } = renderHook(() => useClickOutsideListenerRef(()=>{}))
-//       const refElement = result.current.current;
-  
-//       expect(refElement).toBeNull();
-//     })
-  
-//     it('test', () => {
-//         const { result } = renderHook(() => useClickOutsideListenerRef(mockCallback));
-//         //  const refElement = result.current.current = document.createElement('div');
-  
-//         act(() => {
-//           fireEvent.click(document.createElement('div'));
-//           fireEvent.mouseDown(document);
-//         });
-  
-//         expect(elementMock.addEventListener).toBeCalledWith();
-//     })
-  
-//   });
+  });
