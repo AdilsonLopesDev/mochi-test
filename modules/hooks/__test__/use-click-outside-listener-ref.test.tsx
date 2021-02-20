@@ -1,5 +1,4 @@
-import { Wrapper, render } from '../../test-utils'
-import { cleanup, fireEvent,  } from '@testing-library/react';
+import { Wrapper, render, fireEvent } from '../../test-utils'
 import { useClickOutsideListenerRef } from '../';
 
 
