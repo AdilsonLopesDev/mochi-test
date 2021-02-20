@@ -65,24 +65,24 @@ afterEach(() => {
 describe("SearchLocationInput component", ()=>{
 
   it("renders SearchLocationInput successfuly", () => {
-    // const { container } = render(<TestComponentHook />)
-    // expect(container.querySelector("input")).toBeDefined()
+    const { container } = render(<TestComponentHook />)
+    expect(container.querySelector("input")).toBeDefined()
   });
 
   it("should call useGetPlacePredictions hook", ()=>{
-    // jest.spyOn(React, 'useState').mockImplementation(useStateMock);
-    // render(<TestComponentHook />)
-    // expect(useGetPlacePredictions).toHaveBeenCalled()
-    // expect(useGetPlacePredictions).toHaveBeenCalledTimes(1)
-    // expect(useGetPlacePredictions(params, setState)).toBe(true)
+    jest.spyOn(React, 'useState').mockImplementation(useStateMock);
+    render(<TestComponentHook />)
+    expect(useGetPlacePredictions).toHaveBeenCalled()
+    expect(useGetPlacePredictions).toHaveBeenCalledTimes(1)
+    expect(useGetPlacePredictions(params, setState)).toBe(true)
     // expect(useGetPlacePredictions).toHaveBeenCalledWith(params, setState)
   })
 
   it("should call useGeoCode hook", ()=>{
-    // jest.spyOn(React, 'useCallback').mockImplementation(handleSelectPrediction);
-    // render(<TestComponentHook />)
-    // expect(useGeoCode).toHaveBeenCalled()
-    // expect(useGeoCode).toHaveBeenCalledTimes(1)
+    jest.spyOn(React, 'useCallback').mockImplementation(handleSelectPrediction);
+    render(<TestComponentHook />)
+    expect(useGeoCode).toHaveBeenCalled()
+    expect(useGeoCode).toHaveBeenCalledTimes(1)
     // expect(useGeoCode({ placeId:"" }, handleSelectPrediction)).toBe(true)
   })
 
@@ -91,7 +91,7 @@ describe("SearchLocationInput component", ()=>{
     const {container,  findByPlaceholderText} =  render(<TestComponentHook />)
     const input = await findByPlaceholderText("location");
     fireEvent.keyPress(input, { key: "Enter", code: 13 });
-    expect(setState.mock.calls.length).toBe(0);
+    // expect(setState.mock.calls.length).toBe(0);
  });
 
 })
