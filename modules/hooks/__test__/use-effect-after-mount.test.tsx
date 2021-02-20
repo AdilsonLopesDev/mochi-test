@@ -1,4 +1,4 @@
-import { renderHook, act, RenderHookResult } from '@testing-library/react-hooks';
+import { renderHook } from '@test-utils';
 
 import { useEffectAfterMount } from '..';
 
